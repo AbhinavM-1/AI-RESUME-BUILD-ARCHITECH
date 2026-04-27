@@ -51,7 +51,8 @@ AI-RESUME-BUILD-ARCHITECT/
 └── .gitignore
 
 
-## Contributors:- Abhinav Mandal (@AbhinavM-1)
+## Contributors:-
+-Abhinav Mandal (@AbhinavM-1)
 -Rakshit Raj (@rakshit-raj001)
 -Geetanjali Hantal (@geetanjalihantal6-jpg)
-Naik (@naik14146-prog).
+- Praveen Naik (@naik14146-prog).
