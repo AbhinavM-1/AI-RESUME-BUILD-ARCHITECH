@@ -1,0 +1,75 @@
+.resume-paper {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    color: #334155;
+    font-family: 'Inter', sans-serif;
+    transform: scale(0.65);
+    transform-origin: top center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Common Components */
+.resume-section { margin-bottom: 24px; }
+.section-title { font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px; }
+.photo-box { width: 100px; height: 100px; overflow: hidden; background: #f1f5f9; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.photo-box.circle { border-radius: 50%; }
+.photo-box.square { border-radius: 8px; }
+.photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+.experience-item { margin-bottom: 20px; }
+.exp-header { display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 5px; }
+.position { font-weight: 700; color: #0f172a; font-size: 1.05rem; }
+.company { color: #64748b; font-weight: 600; }
+.date { font-size: 0.85rem; color: #94a3b8; }
+.bullets { padding-left: 18px; margin-top: 8px; }
+.bullets li { font-size: 0.9rem; color: #475569; margin-bottom: 3px; }
+
+.skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-item { padding: 4px 12px; background: #f8fafc; border-left: 3px solid #6366f1; font-size: 0.85rem; font-weight: 600; color: #334155; }
+
+/* STYLE B: SIDEBAR LEFT */
+.style-sidebar-left { display: flex; }
+.style-sidebar-left .sidebar { width: 300px; padding: 40px 30px; }
+.style-sidebar-left .content { flex: 1; padding: 40px; }
+.style-sidebar-left .job-title { font-weight: 700; color: #64748b; margin-top: 5px; }
+.style-sidebar-left .sidebar-title { font-size: 0.9rem; margin-top: 30px; margin-bottom: 15px; }
+
+/* STYLE D: SIDEBAR RIGHT */
+.style-sidebar-right { display: flex; }
+.style-sidebar-right .content { flex: 1; padding: 40px; }
+.style-sidebar-right .sidebar { width: 280px; padding: 40px 30px; }
+.style-sidebar-right .header { margin-bottom: 30px; border-bottom: 4px solid #f1f5f9; padding-bottom: 20px; }
+
+/* STYLE E: GRID BOXES */
+.style-grid-boxes .header-box { padding: 40px; color: white; display: flex; align-items: center; gap: 30px; }
+.style-grid-boxes .header-box h1 { color: white; font-size: 2.5rem; }
+.style-grid-boxes .grid-body { padding: 30px; display: grid; grid-template-columns: 1fr 280px; gap: 30px; }
+.style-grid-boxes .full-width { grid-column: span 2; }
+.style-grid-boxes .box { padding: 20px; border: 1px solid #f1f5f9; border-top-width: 4px; border-radius: 8px; background: #fafafa; margin-bottom: 20px; }
+
+/* STYLE C: MODERN CENTERED */
+.style-modern-centered .hero-header { padding: 60px 40px; text-align: center; color: white; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.style-modern-centered .hero-header h1 { color: white; font-size: 3rem; }
+.style-modern-centered .contact-pills { display: flex; gap: 15px; font-size: 0.9rem; opacity: 0.9; }
+.style-modern-centered .centered-body { padding: 50px; }
+.style-modern-centered .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+
+/* STYLE F: PROFESSIONAL CORPORATE */
+.style-professional-corporate { padding: 60px 50px; }
+.style-professional-corporate .corp-header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 25px; margin-bottom: 35px; }
+.style-professional-corporate .corp-header h1 { font-size: 2.8rem; font-family: 'Times New Roman', serif; color: #000; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+.style-professional-corporate .corp-contact { font-size: 0.9rem; color: #334155; margin-bottom: 8px; }
+.style-professional-corporate .corp-job-title { font-weight: 700; text-transform: uppercase; color: #475569; letter-spacing: 1px; }
+.style-professional-corporate .corp-section-title { font-size: 0.95rem; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 20px; font-weight: 800; color: #000 !important; }
+.style-professional-corporate .corp-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; }
+.style-professional-corporate .experience-item { margin-bottom: 25px; }
+.style-professional-corporate .position { font-family: serif; font-size: 1.1rem; }
+
+/* STYLE A: STANDARD */
+.style-standard .classic-header { padding: 50px; display: flex; justify-content: space-between; align-items: center; background: #fcfcfc; }
+.style-standard .classic-body { padding: 40px 50px; }
+.style-standard .classic-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+.style-standard .classic-title { border-bottom: 2px solid #0f172a; }

@@ -1,0 +1,101 @@
+.template-selector h3 {
+    margin-bottom: 24px;
+    color: white;
+}
+
+.template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.template-option {
+    display: flex;
+    gap: 20px;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.template-option:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    transform: translateX(5px);
+}
+
+.template-option.active {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1) !important;
+}
+
+.template-preview-thumb {
+    width: 80px;
+    height: 100px;
+    background: white;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-preview-thumb.modern::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px; right: 5px; height: 3px; background: #6366f1;
+}
+
+.template-preview-thumb.classic::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 25px; height: 100%; background: #f1f5f9;
+}
+
+.template-preview-thumb.minimal {
+    border: 1px solid #e2e8f0;
+}
+
+.template-preview-thumb.creative {
+    background: #fdf2f8;
+}
+.template-preview-thumb.creative::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0; width: 10px; background: #ec4899;
+}
+
+.template-preview-thumb.professional {
+    background: #f8fafc;
+}
+.template-preview-thumb.professional::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 15px; background: #0f172a;
+}
+
+.template-preview-thumb.tech::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: #10b981; }
+.template-preview-thumb.academic::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 2px; background: #334155; }
+.template-preview-thumb.startup::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #f97316; }
+.template-preview-thumb.legal { border-top: 10px solid #1e293b; }
+.template-preview-thumb.medical::before { content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 100%; background: #ecfeff; }
+.template-preview-thumb.design::before { content: ''; position: absolute; top: 0; left: 0; width: 15px; height: 100%; background: #8b5cf6; }
+.template-preview-thumb.marketing::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #f43f5e; }
+.template-preview-thumb.finance { background: #f8fafc; border-top: 10px solid #0f172a; }
+
+.template-info h4 {
+    color: white;
+    margin-bottom: 4px;
+}
+
+.template-info p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.active-badge {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: #10b981;
+    font-weight: 700;
+}
+

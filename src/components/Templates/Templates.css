@@ -1,0 +1,184 @@
+.templates-page {
+    min-height: 100vh;
+    padding-bottom: 80px;
+    background: radial-gradient(circle at 10% 20%, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 90%);
+}
+
+.templates-content {
+    max-width: 1300px;
+    margin: 100px auto 0;
+    padding: 0 40px;
+}
+
+.templates-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.templates-header h1 {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+}
+
+.templates-header p {
+    font-size: 1.2rem;
+    color: #94a3b8;
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 32px;
+}
+
+.template-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.template-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+}
+
+.template-card-preview {
+    height: 450px;
+    background: #f1f5f9;
+    position: relative;
+    overflow: hidden;
+}
+
+.professional-mockup {
+    width: 85%;
+    height: 95%;
+    background: white;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.template-card:hover .professional-mockup {
+    transform: scale(1.08) translateY(-10px) rotate(1deg);
+}
+
+.mockup-header-strip {
+    height: 45px;
+    background: #f1f5f9;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.mockup-body-strip {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+}
+
+.mockup-sidebar-strip {
+    width: 35%;
+    background: #f8fafc;
+    display: none;
+}
+
+.mockup-content-strip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.m-line {
+    background: #e2e8f0;
+    height: 6px;
+    border-radius: 3px;
+}
+.m-line.l1 { width: 45%; height: 14px; background: #6366f1; }
+.m-line.l2 { width: 100%; height: 8px; }
+.m-line.l3 { width: 85%; height: 8px; }
+
+/* Template Variations - Mockups */
+.professional-mockup.modern { border-top: 8px solid #6366f1; }
+.professional-mockup.classic { display: flex; flex-direction: row; }
+.professional-mockup.classic .mockup-sidebar-strip { display: block; width: 30%; border-right: 1px solid #e2e8f0; }
+.professional-mockup.minimal { border: 1px solid #e2e8f0; padding: 40px; }
+.professional-mockup.minimal .m-line.l1 { background: #0f172a; }
+.professional-mockup.creative { border-left: 12px solid #ec4899; background: #fffdfd; }
+.professional-mockup.creative .m-line.l1 { background: #ec4899; }
+.professional-mockup.professional { border-top: 20px solid #0f172a; }
+.professional-mockup.executive { background: #f1f5f9; }
+.professional-mockup.executive .mockup-header-strip { background: #0f172a; height: 60px; }
+.professional-mockup.executive .m-line.l1 { background: #f1f5f9; }
+
+/* New Template Mockups */
+.professional-mockup.tech { border-top: 6px solid #10b981; }
+.professional-mockup.tech .mockup-sidebar-strip { display: block; background: #f0fdf4; }
+.professional-mockup.academic { border-top: 2px solid #334155; }
+.professional-mockup.academic .m-line.l1 { width: 80%; }
+.professional-mockup.startup { border-top: 8px solid #f97316; }
+.professional-mockup.startup .m-line.l1 { background: #f97316; }
+.professional-mockup.legal { border-top: 15px solid #1e293b; padding: 50px; }
+.professional-mockup.medical { border-top: 8px solid #06b6d4; }
+.professional-mockup.medical .mockup-sidebar-strip { display: block; background: #ecfeff; }
+.professional-mockup.design { border-left: 15px solid #8b5cf6; }
+.professional-mockup.design .m-line.l1 { background: #8b5cf6; }
+.professional-mockup.marketing { border-top: 8px solid #f43f5e; }
+.professional-mockup.finance { border-top: 10px solid #0f172a; background: #f8fafc; }
+.professional-mockup.hr { border-top: 8px solid #8b5cf6; }
+.professional-mockup.engineer { border-top: 10px solid #475569; }
+
+.preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.3s;
+    backdrop-filter: blur(4px);
+}
+
+.template-card:hover .preview-overlay {
+    opacity: 1;
+}
+
+.template-card-info {
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.info-header h3 {
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 700;
+}
+
+.template-tag {
+    background: #6366f1;
+    color: white;
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.template-card-info p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
