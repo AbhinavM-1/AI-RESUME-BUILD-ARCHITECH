@@ -73,3 +73,31 @@
 .style-standard .classic-body { padding: 40px 50px; }
 .style-standard .classic-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
 .style-standard .classic-title { border-bottom: 2px solid #0f172a; }
+
+/* STYLE G: MINIMALIST ELITE */
+.style-minimalist-elite { padding: 80px 60px; text-align: center; }
+.style-minimalist-elite .elite-header { margin-bottom: 50px; }
+.style-minimalist-elite .elite-header h1 { font-size: 3.5rem; font-family: serif; font-weight: 300; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 15px; }
+.style-minimalist-elite .elite-header .job-title { font-size: 1.1rem; color: #64748b; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.style-minimalist-elite .elite-contact { font-size: 0.85rem; color: #94a3b8; display: flex; justify-content: center; gap: 20px; border-top: 1px solid #f1f5f9; padding-top: 20px; width: fit-content; margin: 0 auto; }
+.style-minimalist-elite .elite-body { text-align: left; max-width: 800px; margin: 0 auto; }
+.style-minimalist-elite .elite-section-title { font-family: serif; font-size: 1.2rem; font-style: italic; border-bottom: none; text-align: center; margin-top: 40px; }
+.style-minimalist-elite .elite-section-title::after { content: ''; display: block; width: 30px; height: 1px; background: #cbd5e1; margin: 10px auto; }
+
+/* STYLE H: HIGH IMPACT */
+.style-high-impact { display: flex; flex-direction: column; }
+.style-high-impact .impact-header { padding: 60px; color: white; position: relative; }
+.style-high-impact .impact-header h1 { font-size: 4rem; font-weight: 900; line-height: 1; margin-bottom: 10px; }
+.style-high-impact .impact-header .job-title { font-size: 1.5rem; font-weight: 300; opacity: 0.9; }
+.style-high-impact .impact-contact-strip { background: #1e293b; color: white; padding: 12px 60px; display: flex; gap: 30px; font-size: 0.9rem; }
+.style-high-impact .impact-body { padding: 60px; display: grid; grid-template-columns: 1fr 250px; gap: 50px; }
+.style-high-impact .impact-section-title { font-size: 1.5rem; font-weight: 900; border-left: 5px solid; padding-left: 15px; border-bottom: none; }
+
+/* STYLE I: TIMELINE PRO */
+.style-timeline-pro { padding: 60px; display: grid; grid-template-columns: 280px 1fr; gap: 40px; }
+.style-timeline-pro .sidebar { border-right: 1px solid #f1f5f9; padding-right: 30px; }
+.style-timeline-pro .timeline-container { position: relative; padding-left: 30px; }
+.style-timeline-pro .timeline-line { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+.style-timeline-pro .timeline-item { position: relative; margin-bottom: 40px; }
+.style-timeline-pro .timeline-dot { position: absolute; left: -34px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: white; border: 2px solid; }
+.style-timeline-pro .timeline-section-title { margin-left: -30px; margin-bottom: 30px; }

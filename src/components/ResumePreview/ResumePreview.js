@@ -154,7 +154,7 @@ const ResumePreview = ({ data }) => {
     if (['modern', 'creative', 'startup', 'graduate'].includes(templateId)) {
         return (
             <div className={`resume-paper style-modern-centered`}>
-                <header className="hero-header" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)` }}>
+                <header className="hero-header" style={{ background: primaryColor }}>
                     {renderPhoto("circle")}
                     <h1>{data.personalInfo.fullName}</h1>
                     <p className="job-title-hero">{data.personalInfo.jobTitle}</p>
@@ -194,6 +194,92 @@ const ResumePreview = ({ data }) => {
                         {renderEducation("corp-section-title")}
                     </div>
                 </div>
+            </div>
+        );
+    }
+
+    if (templateId === 'minimalist-elite') {
+        return (
+            <div className={`resume-paper style-minimalist-elite`}>
+                <header className="elite-header">
+                    <h1>{data.personalInfo.fullName}</h1>
+                    <p className="job-title">{data.personalInfo.jobTitle}</p>
+                    <div className="elite-contact">
+                        <span>{data.personalInfo.email}</span>
+                        <span>{data.personalInfo.phone}</span>
+                        <span>{data.personalInfo.location}</span>
+                    </div>
+                </header>
+                <div className="elite-body">
+                    {renderSummary("elite-section-title")}
+                    {renderExperience("elite-section-title")}
+                    {renderSkills("elite-section-title")}
+                    {renderEducation("elite-section-title")}
+                </div>
+            </div>
+        );
+    }
+
+    if (templateId === 'high-impact') {
+        return (
+            <div className={`resume-paper style-high-impact`}>
+                <header className="impact-header" style={{ background: primaryColor }}>
+                    <h1>{data.personalInfo.fullName}</h1>
+                    <p className="job-title">{data.personalInfo.jobTitle}</p>
+                </header>
+                <div className="impact-contact-strip">
+                    <span>{data.personalInfo.email}</span>
+                    <span>{data.personalInfo.phone}</span>
+                    <span>{data.personalInfo.location}</span>
+                </div>
+                <div className="impact-body">
+                    <main>
+                        {renderSummary("impact-section-title")}
+                        {renderExperience("impact-section-title")}
+                    </main>
+                    <aside>
+                        {renderSkills("impact-section-title")}
+                        {renderEducation("impact-section-title")}
+                    </aside>
+                </div>
+            </div>
+        );
+    }
+
+    if (templateId === 'timeline-pro') {
+        return (
+            <div className={`resume-paper style-timeline-pro`}>
+                <aside className="sidebar">
+                    {renderPhoto("circle")}
+                    <div className="sidebar-info">
+                        <h2>{data.personalInfo.fullName}</h2>
+                        <p>{data.personalInfo.jobTitle}</p>
+                        <div className="contact">
+                            <p>{data.personalInfo.email}</p>
+                            <p>{data.personalInfo.phone}</p>
+                        </div>
+                    </div>
+                    {renderSkills("sidebar-title")}
+                    {renderEducation("sidebar-title")}
+                </aside>
+                <main className="timeline-container">
+                    <div className="timeline-line"></div>
+                    {renderSummary("timeline-section-title")}
+                    <section className="resume-section">
+                        <h2 className="timeline-section-title" style={{ color: primaryColor }}>Experience</h2>
+                        {data.experience.map(exp => (
+                            <div key={exp.id} className="timeline-item">
+                                <div className="timeline-dot" style={{ borderColor: primaryColor }}></div>
+                                <div className="exp-header">
+                                    <h3 className="position">{exp.position}</h3>
+                                    <span className="date">{exp.startDate} - {exp.endDate}</span>
+                                </div>
+                                <p className="company">{exp.company}</p>
+                                <p className="description">{exp.description}</p>
+                            </div>
+                        ))}
+                    </section>
+                </main>
             </div>
         );
     }

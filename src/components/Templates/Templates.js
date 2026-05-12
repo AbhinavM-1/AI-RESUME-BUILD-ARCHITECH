@@ -5,6 +5,9 @@ import Navbar from '../Shared/Navbar';
 import './Templates.css';
 
 const templates = [
+    { id: 'minimalist-elite', name: 'Minimalist Elite', description: 'Ultra-clean, elegant layout with high-end typography.', tag: 'Premium' },
+    { id: 'high-impact', name: 'High Impact', description: 'Bold and authoritative design for senior leaders.', tag: 'Bold' },
+    { id: 'timeline-pro', name: 'Timeline Pro', description: 'Visual career progression with a modern timeline.', tag: 'Visual' },
     { id: 'modern', name: 'Modern Professional', description: 'Clean, one-column layout for modern roles.', tag: 'Popular' },
     { id: 'classic', name: 'Executive Classic', description: 'Two-column layout for senior management.', tag: 'Elegant' },
     { id: 'minimal', name: 'Minimalist', description: 'Distraction-free layout focusing on text.', tag: 'Clean' },
