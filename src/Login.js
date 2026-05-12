@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaMicrosoft } from "react-icons/fa";
-import logo from "./assets/logo.png";
+import { FaApple, FaMicrosoft, FaGithub } from "react-icons/fa";
 import { authService } from "./services/api";
 
 function Login() {
@@ -37,7 +36,8 @@ function Login() {
     const providerColors = {
         Google: '#4285f4',
         Apple: '#000000',
-        Microsoft: '#00a4ef'
+        Microsoft: '#00a4ef',
+        GitHub: '#333'
     };
 
     if (popup) {
@@ -58,11 +58,6 @@ function Login() {
   return (
     <div className="main">
       <div className="container">
-        <div className="logo">
-          <div className="logo-box">
-            <img src={logo} alt="AI Resume Builder Logo" />
-          </div>
-        </div>
         <div className="left">
           <div className="left-content">
             <h1>Welcome <br /><span>Back</span></h1>
@@ -71,6 +66,9 @@ function Login() {
         </div>
         <div className="right">
           <form className="card" onSubmit={handleLogin}>
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <h2 className="brand-text" onClick={() => navigate('/')}>CareerForge-Pro</h2>
+            </div>
             <h2>Login</h2>
             <p className="sub">Sign in to access your account</p>
             {error && <p style={{ color: '#ff5f56', marginBottom: '15px', fontWeight: 'bold' }}>{error}</p>}
@@ -100,6 +98,9 @@ function Login() {
             <div className="social-column">
               <button type="button" className="social-btn google" onClick={() => handleSocialLogin('Google')}>
                 <FcGoogle size={22} /> <span>Sign in with Google</span>
+              </button>
+              <button type="button" className="social-btn github" onClick={() => handleSocialLogin('GitHub')}>
+                <FaGithub size={20} /> <span>Sign in with GitHub</span>
               </button>
               <button type="button" className="social-btn apple" onClick={() => handleSocialLogin('Apple')}>
                 <FaApple size={20} /> <span>Sign in with Apple</span>

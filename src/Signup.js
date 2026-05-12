@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./Signup.css";
 import { useNavigate } from "react-router-dom";
 import { authService } from "./services/api";
+import { FcGoogle } from "react-icons/fc";
+import { FaApple, FaGithub } from "react-icons/fa";
 
 function Signup() {
   const navigate = useNavigate();
@@ -36,6 +38,9 @@ function Signup() {
   return (
     <div className="signup-main">
       <form className="signup-container" onSubmit={handleSignup}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <h2 className="brand-text" onClick={() => navigate('/')}>CareerForge-Pro</h2>
+        </div>
         <h1>Create Account</h1>
         <p className="sub-text">Start building your AI Resume</p>
         {error && <p style={{ color: '#ff5f56', marginBottom: '15px', fontWeight: 'bold' }}>{error}</p>}
@@ -84,6 +89,14 @@ function Signup() {
         <button className="signup-btn" type="submit" disabled={loading}>
             {loading ? "Creating account..." : "Create Account →"}
         </button>
+        
+        <div className="divider">or continue with</div>
+        <div className="social-row">
+          <button type="button" className="social-icon google"><FcGoogle size={22} /></button>
+          <button type="button" className="social-icon github"><FaGithub size={22} /></button>
+          <button type="button" className="social-icon apple"><FaApple size={22} /></button>
+        </div>
+
         <p className="login-link">
           Already have an account? <span onClick={() => navigate("/login")}>Login</span>
         </p>
@@ -91,6 +104,5 @@ function Signup() {
     </div>
   );
 }
-
 
 export default Signup;
