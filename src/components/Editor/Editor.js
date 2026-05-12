@@ -28,39 +28,20 @@ const Editor = () => {
     const [isGenerating, setIsGenerating] = useState(false);
 
     const [resumeData, setResumeData] = useState({
-        title: 'Software Engineer - Senior Role',
+        title: '',
         templateId: location.state?.templateId || 'modern',
         personalInfo: {
-            fullName: 'Alexander Pierce',
-            jobTitle: 'Senior Software Architect',
-            email: 'alex.pierce@example.com',
-            phone: '+1 (555) 000-1111',
-            location: 'San Francisco, CA',
-            photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop'
+            fullName: '',
+            jobTitle: '',
+            email: '',
+            phone: '',
+            location: '',
+            photo: ''
         },
-        summary:
-            'Strategic Software Architect with 10+ years of experience in distributed systems and cloud-native applications. Expert in React, Node.js, and scaling infrastructure for millions of users.',
-        experience: [
-            {
-                id: 1,
-                company: 'Global Tech Corp',
-                position: 'Principal Engineer',
-                startDate: '2021-03',
-                endDate: 'Present',
-                description:
-                    'Leading the architecture for our global payment gateway processing $500M annually.',
-                bullets: []
-            }
-        ],
-        education: [
-            {
-                id: 1,
-                school: 'Stanford University',
-                degree: 'M.S. in Computer Science',
-                year: '2015'
-            }
-        ],
-        skills: ['React', 'TypeScript', 'Node.js', 'Go', 'Kubernetes', 'AWS', 'System Design']
+        summary: '',
+        experience: [],
+        education: [],
+        skills: []
     });
 
     useEffect(() => {

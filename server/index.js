@@ -147,20 +147,38 @@ app.get('/api/resumes/public/:id', async (req, res) => {
     }
 });
 
+app.put('/api/resumes/:id', authenticateToken, async (req, res) => {
+  try {
+    const resume = await Resume.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
+      { ...req.body, updatedAt: Date.now() },
+      { new: true }
+    );
+    if (!resume) return res.status(404).json({ error: 'Resume not found' });
+    res.json(resume);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-app.post('/api/ai/generate-summary', authenticateToken, async (req, res) => {
+app.post('/api/ai/generate-summary', async (req, res) => {
+  const { jobTitle, skills, experience } = req.body;
+  
+  const getMockSummary = () => {
+    const summaries = [
+        `Dynamic ${jobTitle || 'Professional'} with over 5 years of experience in ${skills ? skills.slice(0,2).join(' and ') : 'high-impact roles'}. Expertise in driving operational efficiency and leading cross-functional teams to exceed business objectives.`,
+        `Highly skilled ${jobTitle || 'Expert'} specialized in ${skills ? skills.slice(0,3).join(', ') : 'modern industry standards'}. Proven ability to leverage technical proficiency to solve complex challenges and deliver scalable solutions.`,
+        `Result-oriented ${jobTitle || 'Leader'} with a strong background in ${experience && experience[0] ? experience[0].company : 'industry-leading companies'}. Passionate about innovation and continuous improvement in ${skills ? skills[0] : 'core domains'}.`
+    ];
+    return summaries[Math.floor(Math.random() * summaries.length)];
+  };
+
   try {
-    const { jobTitle, skills, experience } = req.body;
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-        const summaries = [
-            `Dynamic ${jobTitle || 'Professional'} with over 5 years of experience in ${skills ? skills.slice(0,2).join(' and ') : 'high-impact roles'}. Expertise in driving operational efficiency and leading cross-functional teams to exceed business objectives.`,
-            `Highly skilled ${jobTitle || 'Expert'} specialized in ${skills ? skills.slice(0,3).join(', ') : 'modern industry standards'}. Proven ability to leverage technical proficiency to solve complex challenges and deliver scalable solutions.`,
-            `Result-oriented ${jobTitle || 'Leader'} with a strong background in ${experience && experience[0] ? experience[0].company : 'industry-leading companies'}. Passionate about innovation and continuous improvement in ${skills ? skills[0] : 'core domains'}.`
-        ];
-        const mockSummary = summaries[Math.floor(Math.random() * summaries.length)];
-        return res.json({ summary: mockSummary, simulated: true });
+        return res.json({ summary: getMockSummary(), simulated: true });
     }
 
     const prompt = `Write a professional 2-3 sentence resume summary for a ${jobTitle}. Core skills: ${skills ? skills.join(', ') : 'not specified'}. Experience: ${experience ? JSON.stringify(experience) : 'not specified'}. Tone: Professional, result-oriented.`;
@@ -172,18 +190,26 @@ app.post('/api/ai/generate-summary', authenticateToken, async (req, res) => {
     const summary = completion.choices[0].message.content.trim();
     res.json({ summary });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to generate summary with AI' });
+    console.error('AI Generation Error (falling back to mock):', err.message);
+    res.json({ 
+        summary: getMockSummary(), 
+        simulated: true,
+        error: err.message 
+    });
   }
 });
 
-app.post('/api/ai/optimize-bullets', authenticateToken, async (req, res) => {
+app.post('/api/ai/optimize-bullets', async (req, res) => {
+  const { bullets } = req.body;
+  const getMockBullets = () => {
+    const verbs = ['Spearheaded', 'Engineered', 'Orchestrated', 'Optimized', 'Streamlined'];
+    const results = ['resulting in a 30% increase in revenue', 'reducing operational costs by 20%', 'improving system latency by 15ms', 'saving 50+ manual hours per week'];
+    return bullets.map((b, i) => `${verbs[i % verbs.length]} ${b.toLowerCase()} ${results[i % results.length]}.`);
+  };
+
   try {
-    const { bullets } = req.body;
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-        const verbs = ['Spearheaded', 'Engineered', 'Orchestrated', 'Optimized', 'Streamlined'];
-        const results = ['resulting in a 30% increase in revenue', 'reducing operational costs by 20%', 'improving system latency by 15ms', 'saving 50+ manual hours per week'];
-        const mockOptimized = bullets.map((b, i) => `${verbs[i % verbs.length]} ${b.toLowerCase()} ${results[i % results.length]}.`);
-        return res.json({ optimizedBullets: mockOptimized, simulated: true });
+        return res.json({ optimizedBullets: getMockBullets(), simulated: true });
     }
 
     const prompt = `Optimize the following resume bullet points to be more impactful and result-oriented. Use action verbs and quantify achievements where possible. Bullets: ${bullets.join('\n')}`;
@@ -196,7 +222,12 @@ app.post('/api/ai/optimize-bullets', authenticateToken, async (req, res) => {
     const optimizedBullets = optimizedContent.split('\n').map(b => b.replace(/^[•-]\s*/, '').trim());
     res.json({ optimizedBullets });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to optimize bullets with AI' });
+    console.error('AI Optimization Error (falling back to mock):', err.message);
+    res.json({ 
+        optimizedBullets: getMockBullets(), 
+        simulated: true,
+        error: err.message 
+    });
   }
 });
 

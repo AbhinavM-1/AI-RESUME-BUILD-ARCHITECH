@@ -1,4 +1,4 @@
-const API_URL = 'https://ai-resume-4nmr.onrender.com/api';
+const API_URL = 'http://127.0.0.1:5000/api';
 
 const apiRequest = async (endpoint, options = {}) => {
     const token = localStorage.getItem('token');
