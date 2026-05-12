@@ -117,22 +117,22 @@ const Editor = () => {
 
         try {
             const canvas = await html2canvas(element, {
-                scale: 2,
+                scale: 2.0, // High-quality but stable resolution
                 useCORS: true,
-                logging: false
+                logging: false,
+                backgroundColor: '#ffffff'
             });
-
-            const imgData = canvas.toDataURL('image/png');
+            
             const pdf = new jsPDF('p', 'mm', 'a4');
-            const imgProps = pdf.getImageProperties(imgData);
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            // Passing the canvas directly is much more stable than toDataURL
+            pdf.addImage(canvas, 'JPEG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`${resumeData.personalInfo.fullName || 'resume'}.pdf`);
         } catch (err) {
-            console.error('PDF Generation Error:', err);
-            alert('Failed to generate PDF.');
+            console.error('Detailed PDF Error:', err);
+            alert(`PDF Export Failed: ${err.message || 'Unknown error'}. Please try refreshing or using a different template.`);
         }
     };
 
@@ -157,7 +157,7 @@ const Editor = () => {
 
                     <div className="vertical-divider"></div>
 
-                    <h2 className="editor-brand">CareerForge-Pro</h2>
+                    <h2 className="brand-text" onClick={() => navigate('/')} style={{ fontSize: '1.6rem' }}>CareerForge-Pro</h2>
 
                     <input
                         type="text"
