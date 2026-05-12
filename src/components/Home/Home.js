@@ -98,7 +98,7 @@ const Home = () => {
 
             <footer className="home-footer-pro">
                 <div className="footer-content">
-                   <h3 className="footer-brand">CareerForge-Pro</h3>
+                    <h3 className="brand-text" style={{ fontSize: '1.5rem', opacity: 0.8 }}>CareerForge-Pro</h3>
                     <p>© 2026 AI Resume Pro. Empowering the next generation of global leaders.</p>
                 </div>
             </footer>

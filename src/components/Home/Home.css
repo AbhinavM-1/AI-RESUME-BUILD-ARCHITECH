@@ -191,20 +191,3 @@
 .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px; }
 .footer-logo { height: 28px; filter: brightness(0) invert(1); opacity: 0.5; }
 .footer-content p { color: #64748b; font-size: 0.9rem; }
-
-.brand-text {
-    font-size: 1.7rem;
-    font-weight: 800;
-    color: white;
-    margin: 0;
-    letter-spacing: -0.5px;
-    cursor: pointer;
-}
-
-.footer-brand {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: white;
-    margin: 0;
-    opacity: 0.8;
-}

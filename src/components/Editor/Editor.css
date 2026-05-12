@@ -46,14 +46,6 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.editor-brand {
-    font-size: 1.45rem;
-    font-weight: 800;
-    color: white;
-    margin: 0;
-    white-space: nowrap;
-}
-
 .header-left input {
     height: 42px;
     max-width: 280px;
