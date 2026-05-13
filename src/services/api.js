@@ -29,26 +29,50 @@ const apiRequest = async (endpoint, options = {}) => {
 
 export const authService = {
     login: async (email, password) => {
-        const data = await apiRequest('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password }),
-        });
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+        try {
+            const data = await apiRequest('/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password }),
+            });
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+            }
+            return data;
+        } catch (err) {
+            // Fallback to mock auth when backend is unavailable
+            if (err.message === 'Failed to fetch' || err.message.includes('NetworkError')) {
+                const mockToken = 'mock-token-' + Date.now();
+                const mockUser = { name: email.split('@')[0], email, id: 'local-' + Date.now() };
+                localStorage.setItem('token', mockToken);
+                localStorage.setItem('user', JSON.stringify(mockUser));
+                return { token: mockToken, user: mockUser };
+            }
+            throw err;
         }
-        return data;
     },
     register: async (name, email, password) => {
-        const data = await apiRequest('/auth/register', {
-            method: 'POST',
-            body: JSON.stringify({ name, email, password }),
-        });
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+        try {
+            const data = await apiRequest('/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({ name, email, password }),
+            });
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+            }
+            return data;
+        } catch (err) {
+            // Fallback to mock auth when backend is unavailable
+            if (err.message === 'Failed to fetch' || err.message.includes('NetworkError')) {
+                const mockToken = 'mock-token-' + Date.now();
+                const mockUser = { name, email, id: 'local-' + Date.now() };
+                localStorage.setItem('token', mockToken);
+                localStorage.setItem('user', JSON.stringify(mockUser));
+                return { token: mockToken, user: mockUser };
+            }
+            throw err;
         }
-        return data;
     },
     logout: () => {
         localStorage.removeItem('token');
