@@ -25,7 +25,13 @@ const Dashboard = () => {
             const data = await resumeService.getAll();
             setResumes(data);
         } catch (err) {
-            console.error('Error fetching resumes:', err);
+            // Fallback: load from localStorage when backend is unavailable
+            if (err.message === 'Failed to fetch' || err.message.includes('NetworkError')) {
+                const savedResumes = JSON.parse(localStorage.getItem('resumes') || '{}');
+                setResumes(Object.values(savedResumes));
+            } else {
+                console.error('Error fetching resumes:', err);
+            }
         } finally {
             setLoading(false);
         }
