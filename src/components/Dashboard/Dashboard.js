@@ -5,7 +5,7 @@ import {
     FaChartLine, FaRegClock, FaEllipsisV, FaShieldAlt 
 } from 'react-icons/fa';
 import './Dashboard.css';
-import { resumeService, authService } from '../../services/api';
+import apiRequest, { resumeService, authService } from '../../services/api';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -42,6 +42,25 @@ const Dashboard = () => {
         navigate('/');
     };
 
+    const handleUpgrade = async () => {
+        try {
+            const data = await apiRequest('/stripe/create-checkout-session', { method: 'POST' });
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch (err) {
+            console.error('Failed to initiate checkout', err);
+            if (err.message.includes('Stripe is not configured')) {
+                 alert("Stripe keys not found. Mocking successful Pro upgrade for testing purposes!");
+                 const updatedUser = { ...user, isPro: true };
+                 localStorage.setItem('user', JSON.stringify(updatedUser));
+                 setUser(updatedUser);
+            } else {
+                 alert('Could not start checkout process. Please check server connection.');
+            }
+        }
+    };
+
     const filteredResumes = resumes.filter(r => 
         r.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -58,6 +77,7 @@ const Dashboard = () => {
                     <button className={`nav-templates ${window.location.pathname === '/templates' ? 'active' : ''}`} onClick={() => navigate('/templates')}><FaMagic /> Templates</button>
                     <button className={`nav-ats ${window.location.pathname === '/ats-checker' ? 'active' : ''}`} onClick={() => navigate('/ats-checker')}><FaShieldAlt /> ATS Checker</button>
                     <button className={`nav-analytics ${window.location.pathname === '/analytics' ? 'active' : ''}`} onClick={() => navigate('/analytics')}><FaChartLine /> Analytics</button>
+                    <button className={`nav-cover-letter ${window.location.pathname === '/cover-letter' ? 'active' : ''}`} onClick={() => navigate('/cover-letter')}><FaFileAlt /> Cover Letter</button>
 
 
                     <h4>Account</h4>
@@ -65,8 +85,17 @@ const Dashboard = () => {
                     <button className="logout-btn" onClick={handleLogout}><FaSignOutAlt /> Sign Out</button>
                 </nav>
                 <div className="pro-badge glass">
-                    <p>Upgrade to Pro</p>
-                    <span>Get 10x more interviews</span>
+                    {user?.isPro ? (
+                        <>
+                            <p>Pro Member</p>
+                            <span>Enjoy unlimited features</span>
+                        </>
+                    ) : (
+                        <>
+                            <p onClick={handleUpgrade} style={{cursor: 'pointer', color: 'var(--primary)'}}>Upgrade to Pro</p>
+                            <span>Get 10x more interviews</span>
+                        </>
+                    )}
                 </div>
             </aside>
             <main className="dashboard-main">
@@ -81,7 +110,7 @@ const Dashboard = () => {
                         />
                     </div>
                     <div className="header-actions">
-                        {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong></span>}
+                        {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong> {user.isPro && <span style={{color: 'gold'}}>★ Pro</span>}</span>}
                         <button className="create-btn" onClick={() => navigate('/templates')}><FaPlus /> Create New</button>
                     </div>
                 </header>

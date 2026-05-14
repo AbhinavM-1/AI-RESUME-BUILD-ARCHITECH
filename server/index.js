@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret';
 
 app.use(cors());
-app.use(express.json());
+// express.json() is moved down so we can parse raw bodies for Stripe webhooks
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-resume-builder';
 mongoose.connect(MONGODB_URI)
@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  isPro: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -72,6 +73,36 @@ const authenticateToken = (req, res, next) => {
 
 const path = require('path');
 
+// Stripe webhook must come before express.json() because it requires raw body
+// Stripe webhook must come before express.json() because it requires raw body
+const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock';
+const stripe = require('stripe')(stripeKey);
+
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const payload = req.body;
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(payload, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const userId = session.client_reference_id;
+    if (userId) {
+       await User.findByIdAndUpdate(userId, { isPro: true });
+    }
+  }
+
+  res.status(200).end();
+});
+
+// Now we can use express.json() for all other routes
+app.use(express.json());
+
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../build')));
 
@@ -85,8 +116,8 @@ app.post('/api/auth/register', async (req, res) => {
     user = new User({ name, email, password: hashedPassword });
     await user.save();
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    const token = jwt.sign({ id: user._id, email: user.email, isPro: user.isPro }, JWT_SECRET, { expiresIn: '7d' });
+    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -101,10 +132,43 @@ app.post('/api/auth/login', async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(400).json({ error: 'Invalid email or password' });
 
-    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    const token = jwt.sign({ id: user._id, email: user.email, isPro: user.isPro }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro } });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/stripe/create-checkout-session', authenticateToken, async (req, res) => {
+  try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+       return res.status(500).json({ error: 'Stripe is not configured on the server.' });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'CareerForge-Pro Upgrade',
+              description: 'Unlock premium templates and unlimited AI features.',
+            },
+            unit_amount: 999, // $9.99
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?success=true`,
+      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?canceled=true`,
+      client_reference_id: req.user.id, // Used in webhook
+    });
+
+    res.json({ url: session.url });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -228,6 +292,76 @@ app.post('/api/ai/optimize-bullets', async (req, res) => {
         simulated: true,
         error: err.message 
     });
+  }
+});
+
+app.post('/api/ai/generate-cover-letter', async (req, res) => {
+  const { jobTitle, company, resumeData } = req.body;
+  
+  const getMockCoverLetter = () => {
+    return `Dear Hiring Manager at ${company || 'your company'},\n\nI am writing to express my strong interest in the ${jobTitle || 'open position'} role. With my background in ${resumeData?.skills?.[0] || 'the industry'} and my experience at ${resumeData?.experience?.[0]?.company || 'previous companies'}, I am confident in my ability to make an immediate impact on your team.\n\nMy career is defined by a commitment to excellence and a track record of delivering results. I am particularly drawn to your company's innovative approach and would welcome the opportunity to contribute to your ongoing success.\n\nThank you for considering my application. I look forward to the possibility of discussing this exciting opportunity with you.\n\nSincerely,\n${resumeData?.personalInfo?.fullName || 'Applicant'}`;
+  };
+
+  try {
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
+        return res.json({ coverLetter: getMockCoverLetter(), simulated: true });
+    }
+
+    const prompt = `Write a professional cover letter for the position of "${jobTitle}" at "${company}". Base the content on the following resume data: ${JSON.stringify(resumeData)}. Ensure the tone is enthusiastic and professional, and highlight the most relevant skills and experience. Keep it under 300 words.`;
+    
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 500,
+    });
+    
+    const coverLetter = completion.choices[0].message.content.trim();
+    res.json({ coverLetter });
+  } catch (err) {
+    console.error('AI Cover Letter Error (falling back to mock):', err.message);
+    res.json({ 
+        coverLetter: getMockCoverLetter(), 
+        simulated: true,
+        error: err.message 
+    });
+  }
+});
+
+const puppeteer = require('puppeteer');
+
+app.post('/api/pdf/generate', async (req, res) => {
+  const { htmlContent } = req.body;
+  if (!htmlContent) return res.status(400).json({ error: 'HTML content is required' });
+
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+    const page = await browser.newPage();
+    
+    // Set viewport to A4 size to ensure correct rendering
+    await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+    
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' }
+    });
+    
+    await browser.close();
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="resume.pdf"',
+      'Content-Length': pdfBuffer.length
+    });
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error('PDF Generation Error:', error);
+    res.status(500).json({ error: 'Failed to generate PDF on the server.' });
   }
 });
 

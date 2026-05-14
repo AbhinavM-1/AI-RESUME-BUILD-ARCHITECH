@@ -11,6 +11,7 @@ import Templates from "./components/Templates/Templates";
 import ATSChecker from "./components/ATSChecker/ATSChecker";
 import Analytics from "./components/Analytics/Analytics";
 import ViewResume from "./components/View/ViewResume";
+import CoverLetterGenerator from "./components/CoverLetter/CoverLetterGenerator";
 import ProtectedRoute from "./components/Shared/ProtectedRoute";
 
 function App() {
@@ -42,6 +43,11 @@ function App() {
         <Route path="/editor/:id" element={
           <ProtectedRoute>
             <Editor />
+          </ProtectedRoute>
+        } />
+        <Route path="/cover-letter" element={
+          <ProtectedRoute>
+            <CoverLetterGenerator />
           </ProtectedRoute>
         } />
       </Routes>

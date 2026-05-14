@@ -140,23 +140,58 @@ const Editor = () => {
         if (!element) return;
 
         try {
-            const canvas = await html2canvas(element, {
-                scale: 2.0, // High-quality but stable resolution
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff'
+            // Extract the HTML and basic styles
+            const htmlContent = `
+                <html>
+                    <head>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+                            body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; background: white; }
+                            ${Array.from(document.styleSheets)
+                                .map(styleSheet => {
+                                    try {
+                                        return Array.from(styleSheet.cssRules)
+                                            .map(rule => rule.cssText).join('');
+                                    } catch (e) { return ''; }
+                                }).join('\n')}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="resume-paper" style="width: 100%; height: 100%; border: none; box-shadow: none;">
+                            ${element.innerHTML}
+                        </div>
+                    </body>
+                </html>
+            `;
+
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://127.0.0.1:5000/api/pdf/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({ htmlContent })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to generate PDF');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${resumeData.personalInfo.fullName || 'resume'}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
             
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            
-            // Passing the canvas directly is much more stable than toDataURL
-            pdf.addImage(canvas, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`${resumeData.personalInfo.fullName || 'resume'}.pdf`);
         } catch (err) {
             console.error('Detailed PDF Error:', err);
-            alert(`PDF Export Failed: ${err.message || 'Unknown error'}. Please try refreshing or using a different template.`);
+            alert(`PDF Export Failed: ${err.message || 'Unknown error'}.`);
         }
     };
 
