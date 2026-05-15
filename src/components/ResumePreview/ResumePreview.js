@@ -19,14 +19,14 @@ const ResumePreview = ({ data }) => {
     const renderSummary = (titleClass = "section-title") => (
         <section className="resume-section">
             <h2 className={titleClass} style={{ color: primaryColor }}>Summary</h2>
-            <p className="summary-text">{data.summary}</p>
+            <p className="summary-text">{data?.summary || 'No summary provided.'}</p>
         </section>
     );
 
     const renderExperience = (titleClass = "section-title") => (
         <section className="resume-section">
             <h2 className={titleClass} style={{ color: primaryColor }}>Experience</h2>
-            {data.experience.map(exp => (
+            {(data?.experience || []).map(exp => (
                 <div key={exp.id} className="experience-item">
                     <div className="exp-header">
                         <h3 className="position">{exp.position}</h3>
@@ -46,7 +46,7 @@ const ResumePreview = ({ data }) => {
         <section className="resume-section">
             <h2 className={titleClass} style={{ color: primaryColor }}>Skills</h2>
             <div className="skills-grid">
-                {data.skills.map((s, i) => <span key={i} className="skill-item" style={{ borderColor: primaryColor }}>{s}</span>)}
+                {(data?.skills || []).map((s, i) => <span key={i} className="skill-item" style={{ borderColor: primaryColor }}>{s}</span>)}
             </div>
         </section>
     );
@@ -54,7 +54,7 @@ const ResumePreview = ({ data }) => {
     const renderEducation = (titleClass = "section-title") => (
         <section className="resume-section">
             <h2 className={titleClass} style={{ color: primaryColor }}>Education</h2>
-            {data.education.map(edu => (
+            {(data?.education || []).map(edu => (
                 <div key={edu.id} className="edu-item">
                     <p><strong>{edu.school}</strong></p>
                     <p>{edu.degree} · {edu.year}</p>
@@ -66,7 +66,7 @@ const ResumePreview = ({ data }) => {
     const renderPhoto = (shape = "circle") => {
         const photoTemplates = ['modern', 'creative', 'startup', 'tech', 'design', 'medical', 'sales', 'marketing', 'graduate'];
         const showPhoto = photoTemplates.includes(templateId);
-        if (showPhoto && data.personalInfo.photo) {
+        if (showPhoto && data?.personalInfo?.photo) {
             return (
                 <div className={`photo-box ${shape}`}>
                     <img src={data.personalInfo.photo} alt="Profile" />

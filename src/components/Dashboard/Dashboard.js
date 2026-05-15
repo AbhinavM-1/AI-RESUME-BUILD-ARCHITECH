@@ -61,8 +61,8 @@ const Dashboard = () => {
         }
     };
 
-    const filteredResumes = resumes.filter(r => 
-        r.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredResumes = (resumes || []).filter(r => 
+        (r.title || 'Untitled Resume').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -111,7 +111,13 @@ const Dashboard = () => {
                     </div>
                     <div className="header-actions">
                         {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong> {user.isPro && <span style={{color: 'gold'}}>★ Pro</span>}</span>}
-                        <button className="create-btn" onClick={() => navigate('/templates')}><FaPlus /> Create New</button>
+                        <button className="create-btn" onClick={() => {
+                            if (!user?.isPro && resumes.length >= 1) {
+                                alert("Free plan limit reached! You can only create 1 resume on the free plan. Upgrade to Pro for unlimited resumes.");
+                                return;
+                            }
+                            navigate('/templates');
+                        }}><FaPlus /> Create New</button>
                     </div>
                 </header>
                 <section className="stats-strip">
@@ -129,10 +135,16 @@ const Dashboard = () => {
                     </div>
                 </section>
                 <div className="resume-grid">
-                    <div className="resume-card add-card" onClick={() => navigate('/templates')}>
+                    <div className="resume-card add-card" onClick={() => {
+                        if (!user?.isPro && resumes.length >= 1) {
+                            alert("Free plan limit reached! Upgrade to Pro to create more resumes.");
+                            return;
+                        }
+                        navigate('/templates');
+                    }}>
                         <div className="plus-circle"><FaPlus /></div>
                         <p>Create New Resume</p>
-                        <span>Select a template to start</span>
+                        <span>{user?.isPro ? 'Select a template' : '1/1 Resumes Used'}</span>
                     </div>
                     {loading ? (
                         <p>Loading resumes...</p>
@@ -153,7 +165,7 @@ const Dashboard = () => {
                                     <h3>{resume.title}</h3>
                                     <span className="match-tag">{resume.templateId}</span>
                                 </div>
-                                <p>Edited {new Date(resume.updatedAt).toLocaleDateString()}</p>
+                                <p>Edited {resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString() : 'Just now'}</p>
                             </div>
                         </div>
                     ))}

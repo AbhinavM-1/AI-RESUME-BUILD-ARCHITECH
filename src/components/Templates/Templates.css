@@ -182,3 +182,26 @@
     line-height: 1.5;
 }
 
+.template-card.locked {
+    position: relative;
+}
+
+.template-card.locked::before {
+    content: "PRO";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: gold;
+    color: #0f172a;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 900;
+    font-size: 0.75rem;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+}
+
+.premium-crown {
+    margin-left: 8px;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}

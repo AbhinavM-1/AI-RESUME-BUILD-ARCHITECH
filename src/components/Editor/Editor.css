@@ -405,4 +405,16 @@ textarea {
         width: 100% !important;
         max-width: 100% !important;
     }
+.ai-btn.pro-locked {
+    background: #1e293b;
+    color: #94a3b8;
+    cursor: pointer;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    position: relative;
+}
+
+.ai-btn.pro-locked:hover {
+    background: #0f172a;
+    border-color: gold;
+}
 }

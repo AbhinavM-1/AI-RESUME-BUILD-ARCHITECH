@@ -14,7 +14,7 @@ import {
 import ResumePreview from '../ResumePreview/ResumePreview';
 import AIAssistant from './AIAssistant';
 import TemplateSelector from './TemplateSelector';
-import apiRequest, { resumeService } from '../../services/api';
+import apiRequest, { resumeService, API_URL } from '../../services/api';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import './Editor.css';
@@ -73,14 +73,20 @@ const Editor = () => {
     };
 
     const generateAISummary = async () => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.isPro) {
+            alert("AI Summary generation is a Pro feature! Please upgrade to unlock the power of AI.");
+            return;
+        }
+
         setIsGenerating(true);
         try {
             const data = await apiRequest('/ai/generate-summary', {
                 method: 'POST',
                 body: JSON.stringify({
-                    jobTitle: resumeData.personalInfo.jobTitle,
-                    skills: resumeData.skills,
-                    experience: resumeData.experience
+                    jobTitle: resumeData.personalInfo?.jobTitle || '',
+                    skills: resumeData.skills || [],
+                    experience: resumeData.experience || []
                 })
             });
 
@@ -165,7 +171,7 @@ const Editor = () => {
             `;
 
             const token = localStorage.getItem('token');
-            const response = await fetch('http://127.0.0.1:5000/api/pdf/generate', {
+            const response = await fetch(`${API_URL}/pdf/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -358,8 +364,8 @@ const Editor = () => {
                             <div className="input-field">
                                 <div className="label-with-ai">
                                     <label>Career Summary</label>
-                                    <button className="ai-btn" onClick={generateAISummary} disabled={isGenerating}>
-                                        {isGenerating ? 'Enhancing...' : <><FaMagic /> AI Rewrite</>}
+                                    <button className={`ai-btn ${!JSON.parse(localStorage.getItem('user') || '{}').isPro ? 'pro-locked' : ''}`} onClick={generateAISummary} disabled={isGenerating}>
+                                        {isGenerating ? 'Enhancing...' : <><FaMagic /> {JSON.parse(localStorage.getItem('user') || '{}').isPro ? 'AI Rewrite' : 'Unlock AI'}</>}
                                     </button>
                                 </div>
 
