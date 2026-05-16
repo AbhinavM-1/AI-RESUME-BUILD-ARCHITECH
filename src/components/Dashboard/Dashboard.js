@@ -6,6 +6,8 @@ import {
 } from 'react-icons/fa';
 import './Dashboard.css';
 import apiRequest, { resumeService, authService } from '../../services/api';
+import Pricing from './Pricing';
+
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -13,6 +15,8 @@ const Dashboard = () => {
     const [resumes, setResumes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [showPricing, setShowPricing] = useState(false);
+
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -42,26 +46,17 @@ const Dashboard = () => {
         navigate('/');
     };
 
-    const handleUpgrade = async () => {
-        try {
-            const data = await apiRequest('/stripe/create-checkout-session', { method: 'POST' });
-            if (data.url) {
-                window.location.href = data.url;
-            }
-        } catch (err) {
-            console.error('Failed to initiate checkout', err);
-            if (err.message.includes('Stripe is not configured')) {
-                 alert("Stripe keys not found. Mocking successful Pro upgrade for testing purposes!");
-                 const updatedUser = { ...user, isPro: true };
-                 localStorage.setItem('user', JSON.stringify(updatedUser));
-                 setUser(updatedUser);
-            } else {
-                 alert('Could not start checkout process. Please check server connection.');
-            }
-        }
+    const handleUpgrade = () => {
+        setShowPricing(true);
     };
 
+
     const handleDuplicate = async (e, resume) => {
+        if (!user?.isPro && isTrialExpired()) {
+            alert("Your 7-day free trial has expired! Please upgrade to Pro to continue using AI Resume Builder.");
+            setShowPricing(true);
+            return;
+        }
         e.stopPropagation();
         try {
             await resumeService.duplicate(resume);
@@ -71,6 +66,16 @@ const Dashboard = () => {
             console.error('Failed to duplicate resume', err);
             alert('Could not duplicate resume.');
         }
+    };
+
+    const isTrialExpired = () => {
+        if (!user || user.isPro) return false;
+        if (!user.createdAt) return false; // Safety check
+        const createdDate = new Date(user.createdAt);
+        const now = new Date();
+        const diffTime = Math.abs(now - createdDate);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays >= 7;
     };
 
     const filteredResumes = (resumes || []).filter(r => 
@@ -124,12 +129,18 @@ const Dashboard = () => {
                     <div className="header-actions">
                         {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong> {user.isPro && <span style={{color: 'gold'}}>★ Pro</span>}</span>}
                         <button className="create-btn" onClick={() => {
+                            if (!user?.isPro && isTrialExpired()) {
+                                alert("Your 7-day free trial has expired! Upgrade to Pro to unlock unlimited access.");
+                                setShowPricing(true);
+                                return;
+                            }
                             if (!user?.isPro && resumes.length >= 1) {
                                 alert("Free plan limit reached! You can only create 1 resume on the free plan. Upgrade to Pro for unlimited resumes.");
                                 return;
                             }
                             navigate('/templates');
                         }}><FaPlus /> Create New</button>
+
                     </div>
                 </header>
                 <section className="stats-strip">
@@ -148,6 +159,11 @@ const Dashboard = () => {
                 </section>
                 <div className="resume-grid">
                     <div className="resume-card add-card" onClick={() => {
+                        if (!user?.isPro && isTrialExpired()) {
+                            alert("Your 7-day free trial has expired! Upgrade to Pro to create more resumes.");
+                            setShowPricing(true);
+                            return;
+                        }
                         if (!user?.isPro && resumes.length >= 1) {
                             alert("Free plan limit reached! Upgrade to Pro to create more resumes.");
                             return;
@@ -156,8 +172,9 @@ const Dashboard = () => {
                     }}>
                         <div className="plus-circle"><FaPlus /></div>
                         <p>Create New Resume</p>
-                        <span>{user?.isPro ? 'Select a template' : '1/1 Resumes Used'}</span>
+                        <span>{user?.isPro ? 'Select a template' : (isTrialExpired() ? 'Trial Expired' : '1/1 Resumes Used')}</span>
                     </div>
+
                     {loading ? (
                         <p>Loading resumes...</p>
                     ) : filteredResumes.map(resume => (
@@ -183,7 +200,9 @@ const Dashboard = () => {
                     ))}
                 </div>
             </main>
+            {showPricing && <Pricing user={user} onClose={() => setShowPricing(false)} />}
         </div>
+
     );
 };
 

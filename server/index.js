@@ -117,7 +117,8 @@ app.post('/api/auth/register', async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ id: user._id, email: user.email, isPro: user.isPro }, JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro } });
+    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro, createdAt: user.createdAt } });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -133,7 +134,8 @@ app.post('/api/auth/login', async (req, res) => {
     if (!validPassword) return res.status(400).json({ error: 'Invalid email or password' });
 
     const token = jwt.sign({ id: user._id, email: user.email, isPro: user.isPro }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, isPro: user.isPro, createdAt: user.createdAt } });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -141,26 +143,25 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/stripe/create-checkout-session', authenticateToken, async (req, res) => {
   try {
+    const { priceId } = req.body;
+    
     if (!process.env.STRIPE_SECRET_KEY) {
-       return res.status(500).json({ error: 'Stripe is not configured on the server.' });
+       return res.status(500).json({ error: 'Stripe is not configured: Missing Secret Key.' });
     }
 
+    const targetPriceId = priceId || process.env.STRIPE_MONTHLY_PRICE_ID;
+
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'upi', 'netbanking'], // Explicitly specifying common Indian methods
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'CareerForge-Pro Upgrade',
-              description: 'Unlock premium templates and unlimited AI features.',
-            },
-            unit_amount: 999, // $9.99
-          },
+          price: targetPriceId,
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: 'subscription',
+      currency: 'inr',
       success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?success=true`,
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/dashboard?canceled=true`,
       client_reference_id: req.user.id, // Used in webhook
