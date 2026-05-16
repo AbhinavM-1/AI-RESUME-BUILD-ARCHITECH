@@ -9,6 +9,12 @@ const AIAssistant = ({ data, onUpdate }) => {
     const [isOptimizing, setIsOptimizing] = useState(false);
     const [jdText, setJdText] = useState('');
     const [keywords, setKeywords] = useState([]);
+
+    const suggestions = [
+        "Include more technical keywords from the JD Analysis.",
+        "Your resume summary should focus on results and impact.",
+        "Ensure your contact information is professional."
+    ];
     
     const handleAnalyzeJD = async () => {
         if (!jdText) return;
