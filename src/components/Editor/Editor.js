@@ -180,8 +180,10 @@ const Editor = () => {
         const element = document.querySelector('.resume-paper');
         if (!element) return;
 
+        setIsGenerating(true);
         try {
-            // Extract the HTML and basic styles
+            // First try high-fidelity backend export
+            const token = localStorage.getItem('token');
             const htmlContent = `
                 <html>
                     <head>
@@ -205,34 +207,53 @@ const Editor = () => {
                 </html>
             `;
 
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${API_URL}/pdf/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                },
-                body: JSON.stringify({ htmlContent })
-            });
+            try {
+                const response = await fetch(`${API_URL}/pdf/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ htmlContent })
+                });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to generate PDF');
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${resumeData.personalInfo.fullName || 'resume'}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                    return;
+                }
+            } catch (backendErr) {
+                console.warn('Backend PDF generation failed, falling back to local export:', backendErr);
             }
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${resumeData.personalInfo.fullName || 'resume'}.pdf`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
+            // Fallback: Local PDF generation using html2canvas and jspdf
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${resumeData.personalInfo.fullName || 'resume'}.pdf`);
             
         } catch (err) {
             console.error('Detailed PDF Error:', err);
-            alert(`PDF Export Failed: ${err.message || 'Unknown error'}.`);
+            alert(`PDF Export Failed: ${err.message || 'Unknown error'}. Try using a different browser or checking your internet connection.`);
+        } finally {
+            setIsGenerating(false);
         }
     };
 
@@ -454,6 +475,7 @@ const Editor = () => {
                                                     updated[index].company = e.target.value;
                                                     setResumeData({ ...resumeData, experience: updated });
                                                 }}
+                                                placeholder="e.g. Google"
                                             />
                                         </div>
 
@@ -466,6 +488,7 @@ const Editor = () => {
                                                     updated[index].position = e.target.value;
                                                     setResumeData({ ...resumeData, experience: updated });
                                                 }}
+                                                placeholder="e.g. Senior Software Engineer"
                                             />
                                         </div>
 
@@ -485,6 +508,7 @@ const Editor = () => {
                                         <div className="input-field">
                                             <label>End Date</label>
                                             <input
+                                                type="month"
                                                 value={exp.endDate}
                                                 onChange={(e) => {
                                                     const updated = [...resumeData.experience];
@@ -618,8 +642,9 @@ const Editor = () => {
                                         </div>
 
                                         <div className="input-field">
-                                            <label>Year</label>
+                                            <label>Completion Year</label>
                                             <input
+                                                type="month"
                                                 value={edu.year}
                                                 onChange={(e) => {
                                                     const updated = [...resumeData.education];
@@ -694,14 +719,13 @@ const Editor = () => {
                 <div className="editor-preview-panel">
                     <ResumePreview data={resumeData} />
                 </div>
-                <div className="editor-main">
-                    <AIAssistant 
-                        data={resumeData} 
-                        onUpdate={setResumeData} 
-                        keywords={keywords} 
-                        setKeywords={setKeywords} 
-                    />
-                </div>
+                
+                <AIAssistant 
+                    data={resumeData} 
+                    onUpdate={setResumeData} 
+                    keywords={keywords} 
+                    setKeywords={setKeywords} 
+                />
             </div>
         </div>
     );

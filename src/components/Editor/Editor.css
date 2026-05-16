@@ -405,6 +405,8 @@ textarea {
         width: 100% !important;
         max-width: 100% !important;
     }
+}
+
 .ai-btn.pro-locked {
     background: #1e293b;
     color: #94a3b8;
@@ -463,5 +465,4 @@ textarea {
 
 .add-bullet-btn:hover {
     background: rgba(99, 102, 241, 0.05);
-}
 }
