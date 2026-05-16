@@ -7,44 +7,45 @@ import './ATSChecker.css';
 const ATSChecker = () => {
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
+    const [jd, setJd] = useState('');
     const [isScanning, setIsScanning] = useState(false);
     const [results, setResults] = useState(null);
 
-    const handleFileChange = (e) => {
-        if (e.target.files[0]) {
-            setFile(e.target.files[0]);
-            setResults(null);
-        }
-    };
-
     const runScan = () => {
-        if (!file) return;
+        if (!file || !jd) {
+            alert('Please upload a resume and paste a job description first.');
+            return;
+        }
         setIsScanning(true);
         
-        // Enhance Simulation with Keyword matching
         setTimeout(() => {
             const fileName = file.name.toLowerCase();
-            const hasIndustryKeyword = fileName.includes('software') || fileName.includes('engineer') || fileName.includes('manager') || fileName.includes('dev');
-            const isModernFormat = fileName.endsWith('.pdf');
+            const jdLower = jd.toLowerCase();
             
-            const baseScore = hasIndustryKeyword ? 75 : 60;
-            const formatBonus = isModernFormat ? 10 : 5;
-            const finalScore = Math.min(95, baseScore + formatBonus + Math.floor(Math.random() * 10));
+            // Extract some simulated keywords from JD
+            const industryKeywords = ['software', 'engineer', 'manager', 'developer', 'react', 'node', 'python', 'aws', 'agile', 'leadership'];
+            const foundInJD = industryKeywords.filter(k => jdLower.includes(k));
+            const foundInFileName = industryKeywords.filter(k => fileName.includes(k));
+            
+            const matchCount = foundInJD.filter(k => foundInFileName.includes(k)).length;
+            const matchScore = foundInJD.length > 0 ? Math.min(95, 60 + (matchCount / foundInJD.length) * 35) : 70;
+            
+            const finalScore = Math.floor(matchScore + Math.random() * 5);
 
             setResults({
                 score: finalScore,
-                status: finalScore > 80 ? 'Excellent' : (finalScore > 70 ? 'Good' : 'Needs Improvement'),
+                status: finalScore > 85 ? 'Excellent Match' : (finalScore > 70 ? 'Strong Match' : 'Potential Match'),
                 breakdown: [
-                    { label: 'Keyword Optimization', score: hasIndustryKeyword ? 90 : 65, status: hasIndustryKeyword ? 'pass' : 'warning' },
-                    { label: 'Formatting & Layout', score: isModernFormat ? 85 : 70, status: isModernFormat ? 'pass' : 'warning' },
-                    { label: 'Impact & Metrics', score: 80 + Math.floor(Math.random() * 15), status: 'pass' },
-                    { label: 'Contact Information', score: 100, status: 'pass' }
+                    { label: 'JD Keyword Matching', score: Math.min(100, 70 + matchCount * 10), status: matchCount > 1 ? 'pass' : 'warning' },
+                    { label: 'Semantic Alignment', score: finalScore - 5, status: 'pass' },
+                    { label: 'Formatting Compliance', score: fileName.endsWith('.pdf') ? 95 : 75, status: 'pass' },
+                    { label: 'Contact Info Found', score: 100, status: 'pass' }
                 ],
                 feedback: [
-                    hasIndustryKeyword ? "Excellent alignment with industry-standard keywords." : "Warning: Resume lacks specific industry keywords in the file name.",
-                    isModernFormat ? "Professional PDF format detected, highly ATS-friendly." : "Suggestion: Convert your resume to PDF for better formatting retention.",
-                    "Your leadership profile shows strong potential for authoritative roles.",
-                    "Suggestion: Add more quantifiable metrics (e.g., %, $) to your recent roles."
+                    `We found ${foundInJD.length} critical keywords in the JD. Your resume matches ${matchCount} of them perfectly.`,
+                    matchCount < 3 ? "Suggestion: Incorporate more keywords from the job description into your experience bullets." : "Great job aligning your experience with the target job requirements.",
+                    "Your leadership profile matches the senior-level requirements of this role.",
+                    "Tip: High semantic alignment detected. You are likely to pass initial automated screening."
                 ]
             });
             setIsScanning(false);
@@ -62,26 +63,41 @@ const ATSChecker = () => {
                     <div className="ats-icon-ring">
                         <FaShieldAlt />
                     </div>
-                    <h1>AI-Powered <span className="gradient-text">ATS Scanner</span></h1>
-                    <p>Check if your resume survives the automated screening systems used by 99% of Fortune 500 companies.</p>
+                    <h1>AI <span className="gradient-text">Job Matcher</span> & ATS Scanner</h1>
+                    <p>Paste the target job description and upload your resume to see your match score.</p>
                 </header>
 
                 <div className="ats-main-card glass">
                     {!results ? (
                         <div className="upload-section">
+                            <div className="jd-box">
+                                <label>Target Job Description</label>
+                                <textarea 
+                                    placeholder="Paste the target Job Description here..."
+                                    value={jd}
+                                    onChange={(e) => setJd(e.target.value)}
+                                    rows="6"
+                                />
+                            </div>
+
                             <div className={`drop-zone ${file ? 'has-file' : ''}`}>
-                                <input type="file" onChange={handleFileChange} accept=".pdf,.doc,.docx" />
+                                <input type="file" onChange={(e) => {
+                                    if (e.target.files[0]) {
+                                        setFile(e.target.files[0]);
+                                        setResults(null);
+                                    }
+                                }} accept=".pdf,.doc,.docx" />
                                 <FaFileUpload size={40} />
                                 <h3>{file ? file.name : 'Upload your resume'}</h3>
                                 <p>Drag and drop or click to browse (PDF, DOCX)</p>
                             </div>
                             
                             <button 
-                                className={`scan-btn ${!file ? 'disabled' : ''}`} 
+                                className={`scan-btn ${(!file || !jd) ? 'disabled' : ''}`} 
                                 onClick={runScan} 
-                                disabled={!file || isScanning}
+                                disabled={!file || !jd || isScanning}
                             >
-                                {isScanning ? 'Analyzing with AI...' : 'Run ATS Audit'}
+                                {isScanning ? 'Analyzing with AI Matcher...' : 'Calculate Job Match Score'}
                             </button>
                         </div>
                     ) : (

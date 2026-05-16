@@ -295,6 +295,33 @@ app.post('/api/ai/optimize-bullets', async (req, res) => {
   }
 });
 
+// JD Analysis Agent
+app.post('/api/ai/analyze-jd', async (req, res) => {
+  const { jd } = req.body;
+  if (!jd) return res.status(400).json({ error: 'Job description is required' });
+
+  const getMockKeywords = () => ['Python', 'Cloud Architecture', 'Agile', 'Team Leadership', 'Project Management', 'SDLC', 'Communication', 'AWS', 'Docker', 'Kubernetes'];
+
+  try {
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
+        return res.json({ keywords: getMockKeywords(), simulated: true });
+    }
+
+    const prompt = `Analyze the following job description and extract a list of 10-15 critical keywords, skills, and ranking factors (e.g., "Python," "Agile," "Leadership"). Return ONLY the keywords as a comma-separated list. JD: ${jd}`;
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 150,
+    });
+    
+    const result = completion.choices[0].message.content.trim();
+    const keywords = result.split(',').map(k => k.trim());
+    res.json({ keywords });
+  } catch (err) {
+    res.json({ keywords: getMockKeywords(), simulated: true, error: err.message });
+  }
+});
+
 app.post('/api/ai/generate-cover-letter', async (req, res) => {
   const { jobTitle, company, resumeData } = req.body;
   

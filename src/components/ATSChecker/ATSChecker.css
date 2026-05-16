@@ -70,6 +70,38 @@
     gap: 32px;
 }
 
+.jd-box {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jd-box label {
+    font-weight: 700;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.jd-box textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: white;
+    padding: 16px;
+    font-size: 0.95rem;
+    resize: vertical;
+    outline: none;
+    transition: 0.3s;
+}
+
+.jd-box textarea:focus {
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
+}
+
 .drop-zone {
     width: 100%;
     max-width: 600px;
