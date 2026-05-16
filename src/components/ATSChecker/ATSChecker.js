@@ -21,21 +21,29 @@ const ATSChecker = () => {
         if (!file) return;
         setIsScanning(true);
         
-        // Simulate ATS Scan
+        // Enhance Simulation with Keyword matching
         setTimeout(() => {
+            const fileName = file.name.toLowerCase();
+            const hasIndustryKeyword = fileName.includes('software') || fileName.includes('engineer') || fileName.includes('manager') || fileName.includes('dev');
+            const isModernFormat = fileName.endsWith('.pdf');
+            
+            const baseScore = hasIndustryKeyword ? 75 : 60;
+            const formatBonus = isModernFormat ? 10 : 5;
+            const finalScore = Math.min(95, baseScore + formatBonus + Math.floor(Math.random() * 10));
+
             setResults({
-                score: 84,
-                status: 'Good',
+                score: finalScore,
+                status: finalScore > 80 ? 'Excellent' : (finalScore > 70 ? 'Good' : 'Needs Improvement'),
                 breakdown: [
-                    { label: 'Keyword Optimization', score: 92, status: 'pass' },
-                    { label: 'Formatting & Layout', score: 78, status: 'warning' },
-                    { label: 'Impact & Metrics', score: 85, status: 'pass' },
+                    { label: 'Keyword Optimization', score: hasIndustryKeyword ? 90 : 65, status: hasIndustryKeyword ? 'pass' : 'warning' },
+                    { label: 'Formatting & Layout', score: isModernFormat ? 85 : 70, status: isModernFormat ? 'pass' : 'warning' },
+                    { label: 'Impact & Metrics', score: 80 + Math.floor(Math.random() * 15), status: 'pass' },
                     { label: 'Contact Information', score: 100, status: 'pass' }
                 ],
                 feedback: [
-                    "Great use of industry keywords throughout the experience section.",
-                    "Your 'Summary' is highly impactful and ATS-friendly.",
-                    "Warning: Avoid using tables or complex graphics which might confuse older ATS systems.",
+                    hasIndustryKeyword ? "Excellent alignment with industry-standard keywords." : "Warning: Resume lacks specific industry keywords in the file name.",
+                    isModernFormat ? "Professional PDF format detected, highly ATS-friendly." : "Suggestion: Convert your resume to PDF for better formatting retention.",
+                    "Your leadership profile shows strong potential for authoritative roles.",
                     "Suggestion: Add more quantifiable metrics (e.g., %, $) to your recent roles."
                 ]
             });

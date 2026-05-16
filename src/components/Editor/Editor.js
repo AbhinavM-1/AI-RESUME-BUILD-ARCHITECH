@@ -114,6 +114,37 @@ const Editor = () => {
         }
     };
 
+    const handleOptimizeBullets = async (expIndex) => {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (!user.isPro) {
+            alert("Bullet Optimization is a Pro feature! Please upgrade to unlock the power of AI.");
+            return;
+        }
+
+        const bullets = resumeData.experience[expIndex].bullets;
+        if (!bullets || bullets.length === 0) {
+            alert("Add some bullet points first to optimize them!");
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const data = await apiRequest('/ai/optimize-bullets', {
+                method: 'POST',
+                body: JSON.stringify({ bullets })
+            });
+            const updated = [...resumeData.experience];
+            updated[expIndex].bullets = data.optimizedBullets;
+            setResumeData({ ...resumeData, experience: updated });
+            alert("Bullets optimized for maximum impact!");
+        } catch (err) {
+            console.error('Optimization Error:', err);
+            alert('Failed to optimize bullets.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const handleSave = async () => {
         try {
             if (id === 'new') {
@@ -460,9 +491,9 @@ const Editor = () => {
                                         </div>
 
                                         <div className="input-field" style={{ gridColumn: 'span 2' }}>
-                                            <label>Description</label>
+                                            <label>Description (Overview)</label>
                                             <textarea
-                                                rows="4"
+                                                rows="2"
                                                 value={exp.description}
                                                 onChange={(e) => {
                                                     const updated = [...resumeData.experience];
@@ -471,6 +502,51 @@ const Editor = () => {
                                                 }}
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="bullets-section">
+                                        <div className="label-with-ai">
+                                            <label>Key Achievements (Bullets)</label>
+                                            <button 
+                                                className={`ai-btn ${!JSON.parse(localStorage.getItem('user') || '{}').isPro ? 'pro-locked' : ''}`}
+                                                onClick={() => handleOptimizeBullets(index)}
+                                            >
+                                                <FaMagic /> Optimize with AI
+                                            </button>
+                                        </div>
+                                        {exp.bullets?.map((bullet, bIndex) => (
+                                            <div key={bIndex} className="bullet-input">
+                                                <input
+                                                    value={bullet}
+                                                    onChange={(e) => {
+                                                        const updated = [...resumeData.experience];
+                                                        updated[index].bullets[bIndex] = e.target.value;
+                                                        setResumeData({ ...resumeData, experience: updated });
+                                                    }}
+                                                    placeholder="Add achievement..."
+                                                />
+                                                <button 
+                                                    className="delete-small"
+                                                    onClick={() => {
+                                                        const updated = [...resumeData.experience];
+                                                        updated[index].bullets = updated[index].bullets.filter((_, i) => i !== bIndex);
+                                                        setResumeData({ ...resumeData, experience: updated });
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button 
+                                            className="add-bullet-btn"
+                                            onClick={() => {
+                                                const updated = [...resumeData.experience];
+                                                updated[index].bullets = [...(updated[index].bullets || []), ''];
+                                                setResumeData({ ...resumeData, experience: updated });
+                                            }}
+                                        >
+                                            + Add Achievement
+                                        </button>
                                     </div>
 
                                     <button

@@ -98,6 +98,16 @@ export const resumeService = {
             method: 'PUT',
             body: JSON.stringify(data),
         });
+    },
+    duplicate: async (resume) => {
+        const { _id, updatedAt, createdAt, userId, ...rest } = resume;
+        return apiRequest('/resumes', {
+            method: 'POST',
+            body: JSON.stringify({
+                ...rest,
+                title: `${resume.title} (Copy)`
+            }),
+        });
     }
 };
 

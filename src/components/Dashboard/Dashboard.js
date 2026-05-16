@@ -61,6 +61,18 @@ const Dashboard = () => {
         }
     };
 
+    const handleDuplicate = async (e, resume) => {
+        e.stopPropagation();
+        try {
+            await resumeService.duplicate(resume);
+            fetchResumes();
+            alert('Resume duplicated successfully!');
+        } catch (err) {
+            console.error('Failed to duplicate resume', err);
+            alert('Could not duplicate resume.');
+        }
+    };
+
     const filteredResumes = (resumes || []).filter(r => 
         (r.title || 'Untitled Resume').toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -156,8 +168,8 @@ const Dashboard = () => {
                                     <div className="mini-line"></div>
                                     <div className="mini-line"></div>
                                 </div>
-                                <div className="card-actions">
-                                    <FaEllipsisV />
+                                <div className="card-actions" onClick={(e) => handleDuplicate(e, resume)} title="Duplicate Resume">
+                                    <FaPlus size={12} />
                                 </div>
                             </div>
                             <div className="resume-info">
