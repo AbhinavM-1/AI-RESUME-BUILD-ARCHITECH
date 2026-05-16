@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-    FaPlus, FaFileAlt, FaMagic, FaSignOutAlt, FaSearch, 
-    FaChartLine, FaRegClock, FaEllipsisV, FaShieldAlt 
+import {
+    FaPlus, FaFileAlt, FaMagic, FaSignOutAlt, FaSearch,
+    FaChartLine, FaRegClock, FaEllipsisV, FaShieldAlt
 } from 'react-icons/fa';
 import './Dashboard.css';
 import apiRequest, { resumeService, authService } from '../../services/api';
@@ -78,7 +78,7 @@ const Dashboard = () => {
         return diffDays >= 7;
     };
 
-    const filteredResumes = (resumes || []).filter(r => 
+    const filteredResumes = (resumes || []).filter(r =>
         (r.title || 'Untitled Resume').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -109,7 +109,7 @@ const Dashboard = () => {
                         </>
                     ) : (
                         <>
-                            <p onClick={handleUpgrade} style={{cursor: 'pointer', color: 'var(--primary)'}}>Upgrade to Pro</p>
+                            <p onClick={handleUpgrade} style={{ cursor: 'pointer', color: 'var(--primary)' }}>Upgrade to Pro</p>
                             <span>Get 10x more interviews</span>
                         </>
                     )}
@@ -119,15 +119,15 @@ const Dashboard = () => {
                 <header>
                     <div className="search-bar glass">
                         <FaSearch color="#94a3b8" />
-                        <input 
-                            type="text" 
-                            placeholder="Search your resumes..." 
+                        <input
+                            type="text"
+                            placeholder="Search your resumes..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <div className="header-actions">
-                        {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong> {user.isPro && <span style={{color: 'gold'}}>★ Pro</span>}</span>}
+                        {user && <span className="welcome-text">Welcome, <strong>{user.name}</strong> {user.isPro && <span style={{ color: 'gold' }}>★ Pro</span>}</span>}
                         <button className="create-btn" onClick={() => {
                             if (!user?.isPro && isTrialExpired()) {
                                 alert("Your 7-day free trial has expired! Upgrade to Pro to unlock unlimited access.");
