@@ -26,6 +26,7 @@ const Editor = () => {
 
     const [activeSection, setActiveSection] = useState('personal');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [keywords, setKeywords] = useState([]); // Lifted from AIAssistant
 
     const [resumeData, setResumeData] = useState({
         title: '',
@@ -131,7 +132,10 @@ const Editor = () => {
         try {
             const data = await apiRequest('/ai/optimize-bullets', {
                 method: 'POST',
-                body: JSON.stringify({ bullets })
+                body: JSON.stringify({ 
+                    bullets,
+                    keywords // Use keywords if available
+                })
             });
             const updated = [...resumeData.experience];
             updated[expIndex].bullets = data.optimizedBullets;
@@ -690,9 +694,15 @@ const Editor = () => {
                 <div className="editor-preview-panel">
                     <ResumePreview data={resumeData} />
                 </div>
+                <div className="editor-main">
+                    <AIAssistant 
+                        data={resumeData} 
+                        onUpdate={setResumeData} 
+                        keywords={keywords} 
+                        setKeywords={setKeywords} 
+                    />
+                </div>
             </div>
-
-            <AIAssistant data={resumeData} onUpdate={setResumeData} />
         </div>
     );
 };

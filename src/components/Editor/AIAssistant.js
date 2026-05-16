@@ -3,12 +3,11 @@ import { FaRobot, FaMagic, FaTimes, FaLightbulb } from 'react-icons/fa';
 import apiRequest from '../../services/api';
 import './AIAssistant.css';
 
-const AIAssistant = ({ data, onUpdate }) => {
+const AIAssistant = ({ data, onUpdate, keywords, setKeywords }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [isOptimizing, setIsOptimizing] = useState(false);
     const [jdText, setJdText] = useState('');
-    const [keywords, setKeywords] = useState([]);
 
     const suggestions = [
         "Include more technical keywords from the JD Analysis.",
