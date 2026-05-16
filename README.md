@@ -9,8 +9,7 @@
   <a href="#-key-features">Features</a> •
   <a href="#-technology-stack">Tech Stack</a> •
   <a href="#-getting-started">Getting Started</a> •
-  <a href="#-contributing-team">The Team</a> •
-  <a href="#-license">License</a>
+  <a href="#-contributing-team">The Team</a>
 </p>
 
 ---
@@ -101,12 +100,6 @@ Driven by a passion for career empowerment, our team is dedicated to building to
 *   **Rakshit Raj** - *Frontend Engineer* - [@rakshit-raj001](https://github.com/rakshit-raj001)
 *   **Geetanjali Hantal** - *UI/UX Specialist* - [@geetanjalihantal6-jpg](https://github.com/geetanjalihantal6-jpg)
 *   **Praveen Naik** - *Backend Developer* - [@naik14146-prog](https://github.com/naik14146-prog)
-
----
-
-## ⚖️ License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
