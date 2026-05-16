@@ -282,6 +282,7 @@ const Editor = () => {
 
                     <input
                         type="text"
+                        placeholder="Resume Title (e.g. Software Engineer Resume)"
                         value={resumeData.title}
                         onChange={(e) =>
                             setResumeData({ ...resumeData, title: e.target.value })

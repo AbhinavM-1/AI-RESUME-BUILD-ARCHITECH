@@ -50,13 +50,19 @@
     height: 42px;
     max-width: 280px;
     width: 100%;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     outline: none;
     border-radius: 10px;
     padding: 0 14px;
     font-size: 0.95rem;
-    background: white;
-    color: #0f172a;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.header-left input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .header-right {
